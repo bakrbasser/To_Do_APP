@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 class AppDatabase {
   static const _databaseName = "todo_app.db";
-  static const _databaseVersion = 3;
+  static const _databaseVersion = 4;
 
   AppDatabase._privateConstructor();
   static final AppDatabase instance = AppDatabase._privateConstructor();
@@ -42,6 +42,20 @@ class AppDatabase {
     color TEXT
 );
 
+''');
+    }
+    if (_databaseVersion == 4) {
+      await db.execute('''CREATE TABLE task (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER REFERENCES user (id) 
+                        NOT NULL,
+    category_id INTEGER REFERENCES category (id) 
+                        NOT NULL,
+    title       TEXT    NOT NULL,
+    description,
+    date        TEXT    NOT NULL,
+    priority    INTEGER DEFAULT (1) 
+);
 ''');
     }
   }
