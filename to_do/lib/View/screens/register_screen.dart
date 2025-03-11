@@ -54,6 +54,7 @@ class RegisterListener extends StatelessWidget {
           SnackBarHelper.showMessage(
               context, 'The two passwords are not identical');
         } else if (state is Registered) {
+          SnackBarHelper.showMessage(context, 'Registered Successfully');
           // TODO: Handle successful registration (e.g., navigate to home)
         } else if (state is MissingField) {
           SnackBarHelper.showMessage(context, 'One or more fields are empty');

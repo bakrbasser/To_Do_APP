@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 class AppDatabase {
   static const _databaseName = "todo_app.db";
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 3;
 
   AppDatabase._privateConstructor();
   static final AppDatabase instance = AppDatabase._privateConstructor();
@@ -18,7 +18,7 @@ class AppDatabase {
   Future<Database> _initDB() async {
     final path = join(await getDatabasesPath(), _databaseName);
     return await openDatabase(path,
-        version: _databaseVersion, onCreate: _createDB);
+        version: _databaseVersion, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future<void> _createDB(Database db, int version) async {
@@ -30,6 +30,20 @@ class AppDatabase {
     password  TEXT    NOT NULL
 )
 ''');
+  }
+
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (_databaseVersion == 3) {
+      await db.execute('''
+      CREATE TABLE category (
+    id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    name  TEXT    UNIQUE
+                  NOT NULL,
+    color TEXT
+);
+
+''');
+    }
   }
 
   Future<int> insert(Map<String, dynamic> row, String table) async {
