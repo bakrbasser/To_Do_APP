@@ -5,13 +5,13 @@ import 'package:to_do/Model/models/user_model.dart';
 
 part 'sign_up_state.dart';
 
-class RegisterCubit extends Cubit<SignUpState> {
+class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit() : super(SignUpInitial());
 
   UserRepository repository = UserRepository.instance;
-  late String _username;
-  late String _password;
-  late String _confirmPassword;
+  String _username = '';
+  String _password = '';
+  String _confirmPassword = '';
 
   set username(String username) {
     _username = username;
@@ -30,14 +30,19 @@ class RegisterCubit extends Cubit<SignUpState> {
       emit(IncompatiblePassword());
       return;
     }
+    if (_username.isEmpty || _password.isEmpty || _confirmPassword.isEmpty) {
+      emit(MissingField());
+      return;
+    }
+
     UserModel user = UserModel(id: 0, username: _username, password: _password);
 
     emit(SigningUp());
     var res = await repository.addUser(user);
     if (res) {
-      emit(SignedUp());
+      emit(Registered());
     } else {
-      emit(SignUpFailed());
+      emit(RegisterFailed());
     }
   }
 }

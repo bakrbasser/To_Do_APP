@@ -21,7 +21,7 @@ class UserRepository {
   Future<bool> checkUser(UserModel user) async {
     Database db = await AppDatabase.instance.database;
     var res = await db.rawQuery(
-        'Select * from user where password = ${user.password} and username = ${user.username} ');
+        'Select * from user where password = \'${user.password}\' and user_name = \'${user.username}\' ');
     return res.isNotEmpty;
   }
 }

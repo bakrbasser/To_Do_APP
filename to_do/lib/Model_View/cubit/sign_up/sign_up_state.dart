@@ -1,14 +1,16 @@
 part of 'sign_up_cubit.dart';
 
 @immutable
-sealed class SignUpState {}
+sealed class RegisterState {}
 
-final class SignUpInitial extends SignUpState {}
+final class SignUpInitial extends RegisterState {}
 
-class IncompatiblePassword extends SignUpState {}
+class IncompatiblePassword extends RegisterState {}
 
-class SigningUp extends SignUpState {}
+class SigningUp extends RegisterState {}
 
-class SignedUp extends SignUpState {}
+class Registered extends RegisterState {}
 
-class SignUpFailed extends SignUpState {}
+class RegisterFailed extends RegisterState {}
+
+class MissingField extends RegisterState {}

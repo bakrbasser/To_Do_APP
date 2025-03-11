@@ -6,11 +6,11 @@ class UserModel {
   UserModel({required this.id, required this.username, required this.password});
 
   Map<String, dynamic> toRow() {
-    return {'username': username, 'password': password};
+    return {'user_name': username, 'password': password};
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'username': username, 'password': password};
+    return {'id': id, 'user_name': username, 'password': password};
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {

@@ -43,7 +43,7 @@ class LoginButton extends StatelessWidget {
 }
 
 class RegisterButton extends StatelessWidget {
-  RegisterButton({super.key});
+  const RegisterButton({super.key});
   @override
   Widget build(BuildContext context) {
     return AuthButton(

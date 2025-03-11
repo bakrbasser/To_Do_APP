@@ -34,7 +34,16 @@ class AppDatabase {
 
   Future<int> insert(Map<String, dynamic> row, String table) async {
     Database db = await database;
-    return await db.insert(table, row);
+    return await db.rawInsert('''INSERT INTO user (
+                     
+                     user_name,
+                     password
+                 )
+                 VALUES (
+                     '${row['user_name']}',
+                     '${row['password']}'
+                 );
+''');
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows(String table) async {
@@ -47,8 +56,6 @@ class AppDatabase {
     var res = await db.rawQuery('Select * From $table where id = $id');
     return res[0];
   }
-
-
 
   Future close() async {
     Database db = await database;

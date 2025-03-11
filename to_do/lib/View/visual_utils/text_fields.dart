@@ -64,7 +64,7 @@ class RegisterUsername extends StatelessWidget {
   Widget build(BuildContext context) {
     return UsernameTextField(
       onChanged: (p0) {
-        BlocProvider.of<LoginCubit>(context, listen: false).username = p0;
+        BlocProvider.of<RegisterCubit>(context, listen: false).username = p0;
       },
     );
   }

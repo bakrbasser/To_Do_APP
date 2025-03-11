@@ -8,8 +8,8 @@ part 'login_state.dart';
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginInitial());
   UserRepository repository = UserRepository.instance;
-  late String _username;
-  late String _password;
+  String _username = '';
+  String _password = '';
 
   set username(String username) {
     _username = username;
@@ -20,6 +20,10 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future login() async {
+    if (_username.isEmpty || _password.isEmpty) {
+      emit(EmptyField());
+      return;
+    }
     UserModel user = UserModel(id: 0, username: _username, password: _password);
 
     emit(LoggingIn());

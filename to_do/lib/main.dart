@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => RegisterCubit()),
             BlocProvider(create: (context) => LoginCubit()),
           ],
-          child: RegisterScreen(),
+          child: const RegisterScreen(),
         ),
       ),
     );
