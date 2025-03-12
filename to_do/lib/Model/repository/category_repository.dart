@@ -1,0 +1,38 @@
+import 'package:sqflite/sqflite.dart';
+import 'package:to_do/Model/database/database.dart';
+import 'package:to_do/Model/models/category_model.dart';
+
+class CategoryRepository {
+  CategoryRepository._privateConstructor();
+
+  static final CategoryRepository instance =
+      CategoryRepository._privateConstructor();
+
+  final String table = 'category';
+
+  Future<bool> addCategory(CategoryModel category) async {
+    try {
+      await AppDatabase.instance.insert(category.toRow(), table);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<List<CategoryModel>> fetchCategories() async {
+    Database db = await AppDatabase.instance.database;
+    var res = await db.rawQuery('SELECT * FROM $table');
+    return List.generate(
+        res.length, (index) => CategoryModel.fromJson(res[index]));
+  }
+
+  Future<bool> removeCategory(int id) async {
+    Database db = await AppDatabase.instance.database;
+    try {
+      await db.rawDelete('''DELETE FROM $table WHERE ID = '$id' ''');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:to_do/Model/database/user_repository.dart';
+import 'package:to_do/Model/repository/user_repository.dart';
 import 'package:to_do/Model/models/user_model.dart';
 
 part 'sign_up_state.dart';

@@ -10,11 +10,12 @@ class UserRepository {
   final String table = 'user';
 
   Future<bool> addUser(UserModel user) async {
-    var result = await AppDatabase.instance.insert(user.toRow(), table);
-    if (result == 0) {
-      return false;
-    } else {
+    try {
+      await AppDatabase.instance.insert(user.toRow(), table);
+
       return true;
+    } catch (e) {
+      return false;
     }
   }
 
