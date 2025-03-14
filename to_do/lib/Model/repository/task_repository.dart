@@ -18,9 +18,9 @@ class TaskRepository {
     }
   }
 
-  Future<List<TaskModel>> fetchTasks() async {
+  Future<List<TaskModel>> fetchTasks(int id) async {
     Database db = await AppDatabase.instance.database;
-    var res = await db.rawQuery('SELECT * FROM $table');
+    var res = await db.rawQuery('''SELECT * FROM $table where id = '$id' ''');
     return List.generate(res.length, (index) => TaskModel.fromJson(res[index]));
   }
 
