@@ -1,6 +1,6 @@
 class TaskModel {
   final int? id;
-  final int userId;
+  int userId = -1;
   final int categoryId;
   final String title;
   final String? description;

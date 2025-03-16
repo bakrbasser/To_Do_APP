@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do/Model_View/cubit/login/login_cubit.dart';
 import 'package:to_do/Model_View/cubit/sign_up/sign_up_cubit.dart';
+import 'package:to_do/Model_View/storage/added_category.dart';
+import 'package:to_do/Model_View/storage/added_task.dart';
 
 class AuthTextField extends StatelessWidget {
   const AuthTextField(
@@ -25,6 +27,26 @@ class AuthTextField extends StatelessWidget {
         border: const OutlineInputBorder(),
         hintText: hintText,
       ),
+      style: Theme.of(context).textTheme.bodyMedium,
+    );
+  }
+}
+
+class TaskCrudTextField extends StatelessWidget {
+  const TaskCrudTextField(
+      {super.key, required this.hintText, required this.onChanged});
+  final String hintText;
+  final Function(String) onChanged;
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      onChanged: onChanged,
+      decoration: InputDecoration(
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white)),
+          border: const UnderlineInputBorder(borderSide: BorderSide.none),
+          hintText: hintText,
+          hintStyle: Theme.of(context).textTheme.bodyMedium),
       style: Theme.of(context).textTheme.bodyMedium,
     );
   }
@@ -105,4 +127,35 @@ class RegisterConfirmPassword extends StatelessWidget {
       },
     );
   }
+}
+
+class TaskTitle extends TaskCrudTextField {
+  TaskTitle({super.key})
+      : super(
+          hintText: 'Title',
+          onChanged: (p0) {
+            In_Memory_Task.title = p0;
+          },
+        );
+}
+
+class TaskDescription extends TaskCrudTextField {
+  TaskDescription({super.key})
+      : super(
+          hintText: 'Description',
+          onChanged: (p0) {
+            In_Memory_Task.description = p0;
+          },
+        );
+}
+
+class CategoryNameTextField extends AuthTextField {
+  CategoryNameTextField({super.key})
+      : super(
+            hintText: 'Category name',
+            obscureText: false,
+            onChanged: (p0) {
+              In_Memory_Category.name = p0;
+            },
+            type: TextInputType.text);
 }

@@ -11,7 +11,26 @@ class TaskRepository {
 
   Future<bool> addTask(TaskModel task) async {
     try {
-      await AppDatabase.instance.insert(task.toRow(), table);
+      Database db = await AppDatabase.instance.database;
+      db.rawInsert('''
+INSERT INTO task (
+                     user_id,
+                     category_id,
+                     title,
+                     description,
+                     date,
+                     priority,
+                     
+                 )
+                 VALUES (
+                     '${task.userId}',
+                     '${task.categoryId}',
+                     '${task.title}',
+                     '${task.description}',
+                     '${task.date}',
+                     '${task.priority}'
+                 );
+    ''');
       return true;
     } catch (e) {
       return false;

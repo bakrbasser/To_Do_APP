@@ -12,7 +12,19 @@ class CategoryRepository {
 
   Future<bool> addCategory(CategoryModel category) async {
     try {
-      await AppDatabase.instance.insert(category.toRow(), table);
+      var db = await AppDatabase.instance.database;
+      db.rawInsert('''
+INSERT INTO category (
+                         
+                         name,
+                         color
+                     )
+                     VALUES (
+                         
+                         '${category.name}',
+                         '${category.color}'
+                     );
+''');
       return true;
     } catch (e) {
       return false;

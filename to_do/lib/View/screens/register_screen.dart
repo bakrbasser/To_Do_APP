@@ -12,25 +12,28 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RegisterListener(
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(leading: const ExitButton()),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: ScreenSizeHelper.height_P(context, 0.06)),
-                const TitleLargeText(text: 'Register'),
-                SizedBox(height: ScreenSizeHelper.height_P(context, 0.06)),
-                const RegisterForm(), // Extracted form fields
-                SizedBox(height: ScreenSizeHelper.height_P(context, 0.08)),
-                const RegisterButton(),
-                SizedBox(height: ScreenSizeHelper.height_P(context, 0.015)),
-                const AlreadyHaveAccount(),
-              ],
+    return BlocProvider(
+      create: (context) => RegisterCubit(),
+      child: RegisterListener(
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(leading: const ExitButton()),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: ScreenSizeHelper.height_P(context, 0.06)),
+                  const TitleLargeText(text: 'Register'),
+                  SizedBox(height: ScreenSizeHelper.height_P(context, 0.06)),
+                  const RegisterForm(), // Extracted form fields
+                  SizedBox(height: ScreenSizeHelper.height_P(context, 0.08)),
+                  const RegisterButton(),
+                  SizedBox(height: ScreenSizeHelper.height_P(context, 0.015)),
+                  const AlreadyHaveAccount(),
+                ],
+              ),
             ),
           ),
         ),

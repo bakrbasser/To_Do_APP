@@ -5,13 +5,21 @@ class AppTheme {
   AppTheme._privateConstructor();
   static AppTheme instance = AppTheme._privateConstructor();
 
-  ThemeData theme = ThemeData(
-    scaffoldBackgroundColor: AppColors.instance.screensBackground,
-    textTheme: AppFonts.instance.textTheme,
-    appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.instance.screensBackground,
-        foregroundColor: Colors.white),
-  );
+  late ThemeData theme = ThemeData(
+      scaffoldBackgroundColor: AppColors.instance.screensBackground,
+      textTheme: AppFonts.instance.textTheme,
+      appBarTheme: AppBarTheme(
+          backgroundColor: AppColors.instance.screensBackground,
+          foregroundColor: Colors.white,
+          centerTitle: true),
+      navigationBarTheme: navigationBarTheme);
+
+  NavigationBarThemeData navigationBarTheme = NavigationBarThemeData(
+      backgroundColor: AppColors.instance.navigationBarBackground,
+      labelTextStyle: WidgetStatePropertyAll(AppFonts.instance._bodyMedium),
+      iconTheme: const WidgetStatePropertyAll(
+          IconThemeData(color: Colors.white, size: 30)),
+      indicatorColor: Colors.black);
 }
 
 class AppColors {
@@ -19,6 +27,9 @@ class AppColors {
   static AppColors instance = AppColors._privateConstructor();
 
   final Color screensBackground = const Color(0xff121212);
+  final Color navigationBarBackground = const Color(0xff363636);
+  final Color appPurple = const Color(0xff8687E7);
+  final Color priorityBox = const Color(0xff272727);
 }
 
 class AppFonts {

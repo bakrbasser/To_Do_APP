@@ -85,7 +85,7 @@ CREATE TABLE logged_user (
     }
   }
 
-  Future<int> insert(Map<String, dynamic> row, String table) async {
+  Future<int> insertUser(Map<String, dynamic> row, String table) async {
     Database db = await database;
     return await db.rawInsert('''INSERT INTO user (
                      

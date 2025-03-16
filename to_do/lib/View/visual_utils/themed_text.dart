@@ -1,79 +1,79 @@
 import 'package:flutter/material.dart';
 
-abstract class BaseText extends StatelessWidget {
-  final String text;
-  final TextStyle? style;
-
-  const BaseText({super.key, required this.text, this.style});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(text, style: style);
-  }
-}
-
 class TitleLargeText extends StatelessWidget {
+  final Color color;
   final String text;
-
-  const TitleLargeText({super.key, required this.text});
+  const TitleLargeText(
+      {super.key, required this.text, this.color = Colors.white});
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: Theme.of(context).textTheme.titleLarge);
+    return Text(text,
+        style: Theme.of(context).textTheme.titleLarge!.copyWith(color: color));
   }
 }
 
 class TitleMediumText extends StatelessWidget {
+  final Color color;
   final String text;
-
-  const TitleMediumText({super.key, required this.text});
+  const TitleMediumText(
+      {super.key, required this.text, this.color = Colors.white});
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: Theme.of(context).textTheme.titleMedium);
+    return Text(text,
+        style: Theme.of(context).textTheme.titleMedium!.copyWith(color: color));
   }
 }
 
 class TitleSmallText extends StatelessWidget {
+  final Color color;
   final String text;
-
-  const TitleSmallText({super.key, required this.text});
+  const TitleSmallText(
+      {super.key, required this.text, this.color = Colors.white});
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: Theme.of(context).textTheme.titleSmall);
+    return Text(text,
+        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: color));
   }
 }
 
 class BodyLargeText extends StatelessWidget {
+  final Color color;
   final String text;
-
-  const BodyLargeText({super.key, required this.text});
+  const BodyLargeText(
+      {super.key, required this.text, this.color = Colors.white});
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: Theme.of(context).textTheme.bodyLarge);
+    return Text(text,
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: color));
   }
 }
 
 class BodyMediumText extends StatelessWidget {
+  final Color color;
   final String text;
-
-  const BodyMediumText({super.key, required this.text});
+  const BodyMediumText(
+      {super.key, required this.text, this.color = Colors.white});
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: Theme.of(context).textTheme.bodyMedium);
+    return Text(text,
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: color));
   }
 }
 
 class BodySmallText extends StatelessWidget {
+  final Color color;
   final String text;
-
-  const BodySmallText({super.key, required this.text});
+  const BodySmallText(
+      {super.key, required this.text, this.color = Colors.white});
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: Theme.of(context).textTheme.bodySmall);
+    return Text(text,
+        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: color));
   }
 }

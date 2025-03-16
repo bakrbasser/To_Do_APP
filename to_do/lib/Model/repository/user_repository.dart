@@ -11,7 +11,7 @@ class UserRepository {
 
   Future<bool> addUser(UserModel user) async {
     try {
-      await AppDatabase.instance.insert(user.toRow(), table);
+      await AppDatabase.instance.insertUser(user.toRow(), table);
 
       return true;
     } catch (e) {
@@ -19,10 +19,14 @@ class UserRepository {
     }
   }
 
-  Future<bool> checkUser(UserModel user) async {
+  Future<int> checkUser(UserModel user) async {
     Database db = await AppDatabase.instance.database;
-    var res = await db.rawQuery(
-        'Select * from user where password = \'${user.password}\' and user_name = \'${user.username}\' ');
-    return res.isNotEmpty;
+    List<Map<String, dynamic>> res = await db.rawQuery(
+        'Select id from user where password = \'${user.password}\' and user_name = \'${user.username}\' ');
+    if (res.isNotEmpty) {
+      return res[0]['id'];
+    } else {
+      return -1;
+    }
   }
 }
