@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 class AppDatabase {
   static const _databaseName = "todo_app.db";
-  static const _databaseVersion = 6;
+  static const _databaseVersion = 5;
 
   AppDatabase._privateConstructor();
   static final AppDatabase instance = AppDatabase._privateConstructor();
@@ -22,7 +22,8 @@ class AppDatabase {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    await db.execute('''
+    try {
+      await db.execute('''
     CREATE TABLE user (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     user_name TEXT    NOT NULL
@@ -30,10 +31,8 @@ class AppDatabase {
     password  TEXT    NOT NULL
 )
 ''');
-  }
-
-  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
-    if (_databaseVersion == 3) {
+    } catch (e) {}
+    try {
       await db.execute('''
       CREATE TABLE category (
     id    INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,8 +42,9 @@ class AppDatabase {
 );
 
 ''');
-    }
-    if (_databaseVersion == 4) {
+    } catch (e) {}
+
+    try {
       await db.execute('''CREATE TABLE task (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id     INTEGER REFERENCES user (id) 
@@ -57,8 +57,9 @@ class AppDatabase {
     priority    INTEGER DEFAULT (1) 
 );
 ''');
-    }
-    if (_databaseVersion == 5) {
+    } catch (e) {}
+
+    try {
       await db.execute('''
 CREATE TABLE task (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,8 +75,9 @@ CREATE TABLE task (
                         NOT NULL
 );
 ''');
-    }
-    if (_databaseVersion == 6) {
+    } catch (e) {}
+
+    try {} catch (e) {
       await db.execute('''
 CREATE TABLE logged_user (
     id INTEGER PRIMARY KEY
@@ -83,6 +85,13 @@ CREATE TABLE logged_user (
 );
 ''');
     }
+  }
+
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (_databaseVersion == 3) {}
+    if (_databaseVersion == 4) {}
+    if (_databaseVersion == 5) {}
+    if (_databaseVersion == 6) {}
   }
 
   Future<int> insertUser(Map<String, dynamic> row, String table) async {

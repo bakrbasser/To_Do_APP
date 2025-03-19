@@ -21,10 +21,7 @@ class AddingTaskProperties extends StatelessWidget {
         ),
         const PickTaskPriority(),
         const Spacer(),
-        BlocProvider(
-          create: (context) => TaskCubit(),
-          child: const AddTaskButton(),
-        )
+        const AddTaskButton()
       ],
     );
   }

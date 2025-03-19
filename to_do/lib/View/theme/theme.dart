@@ -12,7 +12,8 @@ class AppTheme {
           backgroundColor: AppColors.instance.screensBackground,
           foregroundColor: Colors.white,
           centerTitle: true),
-      navigationBarTheme: navigationBarTheme);
+      navigationBarTheme: navigationBarTheme,
+      checkboxTheme: checkboxTheme);
 
   NavigationBarThemeData navigationBarTheme = NavigationBarThemeData(
       backgroundColor: AppColors.instance.navigationBarBackground,
@@ -20,6 +21,11 @@ class AppTheme {
       iconTheme: const WidgetStatePropertyAll(
           IconThemeData(color: Colors.white, size: 30)),
       indicatorColor: Colors.black);
+
+  CheckboxThemeData checkboxTheme = const CheckboxThemeData(
+    shape: CircleBorder(),
+    side: BorderSide(color: Colors.white),
+  );
 }
 
 class AppColors {
@@ -30,6 +36,7 @@ class AppColors {
   final Color navigationBarBackground = const Color(0xff363636);
   final Color appPurple = const Color(0xff8687E7);
   final Color priorityBox = const Color(0xff272727);
+  final Color lessWhite = const Color(0xffAFAFAF);
 }
 
 class AppFonts {

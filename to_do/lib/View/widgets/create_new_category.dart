@@ -18,6 +18,7 @@ class CreateNewCategory extends StatelessWidget {
       child: BlocListener<CategoriesCubit, CategoriesState>(
         listener: (context, state) {
           if (state is AddedSuccessfully) {
+            //Add Category To Local Categories
             SnackBarHelper.showMessage(context, 'Added Successfully');
             Navigator.pop(context);
           } else if (state is AddingFailed) {
@@ -39,7 +40,7 @@ class CreateNewCategory extends StatelessWidget {
                 const BodyLargeText(text: 'Category color :'),
                 const BlockPickerListExample(),
                 const Spacer(),
-                const PriorityButtons()
+                const CreateNewCategoryButtons()
               ],
             ),
           ),
@@ -49,8 +50,8 @@ class CreateNewCategory extends StatelessWidget {
   }
 }
 
-class PriorityButtons extends StatelessWidget {
-  const PriorityButtons({super.key});
+class CreateNewCategoryButtons extends StatelessWidget {
+  const CreateNewCategoryButtons({super.key});
 
   @override
   Widget build(BuildContext context) {

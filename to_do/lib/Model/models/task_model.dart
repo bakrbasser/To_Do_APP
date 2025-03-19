@@ -8,6 +8,19 @@ class TaskModel {
   final int? priority;
   final int isDone;
 
+  bool get isDoneAsBool {
+    if (isDone == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  String get formattedDate {
+    var temp = DateTime.parse(date);
+    return '${temp.year}/${temp.month}/${temp.day}';
+  }
+
   TaskModel(
       {this.id,
       required this.userId,

@@ -39,7 +39,9 @@ INSERT INTO task (
 
   Future<List<TaskModel>> fetchTasks(int id) async {
     Database db = await AppDatabase.instance.database;
-    var res = await db.rawQuery('''SELECT * FROM $table where id = '$id' ''');
+    var res = await db.rawQuery('''
+    SELECT * FROM $table where user_id = '$id'
+        ''');
     return List.generate(res.length, (index) => TaskModel.fromJson(res[index]));
   }
 

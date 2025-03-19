@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do/Model/models/category_model.dart';
-import 'package:to_do/Model/repository/logged_user_repository.dart';
 import 'package:to_do/Model_View/cubit/categories/categories_cubit.dart';
 import 'package:to_do/Model_View/cubit/login/login_cubit.dart';
 import 'package:to_do/Model_View/cubit/priority/priority_cubit.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do/Model/models/category_model.dart';
-import 'package:to_do/Model_View/cubit/categories/categories_cubit.dart';
+import 'package:to_do/Model_View/storage/in_memory_categories.dart';
 import 'package:to_do/View/theme/theme.dart';
 import 'package:to_do/View/visual_utils/buttons.dart';
 import 'package:to_do/View/visual_utils/screen_size_helper.dart';
@@ -24,10 +23,7 @@ class TaskCategoryDialog extends StatelessWidget {
           children: [
             const TitleMediumText(text: 'Choose Category'),
             SizedBox(height: ScreenSizeHelper.height_P(context, 0.05)),
-            BlocProvider(
-              create: (context) => CategoriesCubit(),
-              child: const CategoriesBody(),
-            ),
+            const CategoriesBody(),
             const Spacer(),
             const AddCategoryButton()
           ],
@@ -48,20 +44,13 @@ class _CategoriesBodyState extends State<CategoriesBody> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<CategoriesCubit>(context, listen: false).fetchCategories();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CategoriesCubit, CategoriesState>(
-      builder: (context, state) {
-        if (state is FetchedCategories) {
-          return CategoriesGridView(categories: state.categories);
-        } else {
-          return const NoCategoriesWereFound();
-        }
-      },
-    );
+    //TODO: Handle empty list
+    return CategoriesGridView(
+        categories: InMemoryCategories.instance.categories);
   }
 }
 

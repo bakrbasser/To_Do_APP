@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do/Model_View/cubit/logged_user/logged_user_cubit.dart';
+import 'package:to_do/Model_View/cubit/task/task_crud/task_cubit.dart';
+import 'package:to_do/Model_View/storage/in_memory_categories.dart';
 import 'package:to_do/View/screens/login_screen.dart';
 import 'package:to_do/View/screens/main_screen.dart';
 import 'package:to_do/View/theme/theme.dart';
+import 'package:to_do/View/widgets/initial.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,13 +17,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.instance.theme,
-      home: BlocProvider(
-        create: (context) => LoggedUserCubit(),
-        child: const Scaffold(
-          body: AppScreen(),
+    return BlocProvider(
+      create: (context) => TaskCubit(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.instance.theme,
+        home: BlocProvider(
+          create: (context) => LoggedUserCubit(),
+          child: const Scaffold(
+            body: AppScreen(),
+          ),
         ),
       ),
     );
@@ -38,7 +44,7 @@ class _AppScreenState extends State<AppScreen> {
   @override
   void initState() {
     super.initState();
-
+    InMemoryCategories.instance.loadCategories();
     BlocProvider.of<LoggedUserCubit>(context, listen: false).checkLoggedUser();
   }
 
@@ -46,7 +52,9 @@ class _AppScreenState extends State<AppScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<LoggedUserCubit, LoggedUserState>(
       builder: (context, state) {
-        if (state is LoggedUser) {
+        if (state is LoggedUserInitial) {
+          return const Initial();
+        } else if (state is LoggedUser) {
           return const MainScreen();
         } else {
           return const LoginScreen();

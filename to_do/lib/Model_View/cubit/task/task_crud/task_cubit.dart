@@ -8,17 +8,21 @@ import 'package:to_do/Model_View/storage/logged_user.dart';
 part 'task_state.dart';
 
 class TaskCubit extends Cubit<TaskState> {
-  TaskCubit() : super(TaskInitial());
+  TaskCubit() : super(TaskInitial()) {
+    // fetchTasks();
+  }
   TaskRepository taskRepository = TaskRepository.instance;
   LoggedUserRepository loggedUserRepository = LoggedUserRepository.instance;
 
+  List<TaskModel> tasks = [];
+
   Future fetchTasks() async {
     int id = await loggedUserRepository.lastLoggedUserId();
-    var res = await taskRepository.fetchTasks(id);
-    if (res.isEmpty) {
+    tasks = await taskRepository.fetchTasks(id);
+    if (tasks.isEmpty) {
       emit(EmptyTasks());
     } else {
-      emit(LoadedTasks(tasks: res));
+      emit(LoadedTasks(tasks: tasks));
     }
   }
 
@@ -28,7 +32,7 @@ class TaskCubit extends Cubit<TaskState> {
       emit(OperationFailed(message: 'One field or more are empty'));
     } else {
       if (await taskRepository.addTask(In_Memory_Task.task!)) {
-        emit(TaskAddedSuccessfully());
+        emit(TaskAddedSuccessfully(tasks: tasks));
       } else {
         emit(OperationFailed(message: 'Something wrong happened'));
       }
