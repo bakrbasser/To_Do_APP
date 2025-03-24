@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:to_do/Model_View/storage/added_task.dart';
+import 'package:to_do/Model_View/storage/cached_task.dart';
 
 part 'priority_state.dart';
 
@@ -13,7 +13,7 @@ class PriorityCubit extends Cubit<PriorityState> {
   }
 
   int savePriority() {
-    In_Memory_Task.priority = priority;
+    Cached_Task_For_Adding_Fields.priority = priority;
     return priority;
   }
 }

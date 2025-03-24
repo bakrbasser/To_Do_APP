@@ -25,10 +25,14 @@ class LoadedTasks extends TaskStateWithList {
   LoadedTasks({required super.tasks});
 }
 
-class TaskDeletedSuccessfully extends TaskState {}
+class TaskDeletedSuccessfully extends TaskStateWithList {
+  TaskDeletedSuccessfully({required super.tasks});
+}
 
 class TaskAddedSuccessfully extends TaskStateWithList {
   TaskAddedSuccessfully({required super.tasks});
 }
 
-class TaskUpdatedSuccessfully extends TaskState {}
+class TaskUpdatedSuccessfully extends TaskStateWithList {
+  TaskUpdatedSuccessfully({required super.tasks});
+}

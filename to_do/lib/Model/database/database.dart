@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 class AppDatabase {
   static const _databaseName = "todo_app.db";
-  static const _databaseVersion = 5;
+  static const _databaseVersion = 1;
 
   AppDatabase._privateConstructor();
   static final AppDatabase instance = AppDatabase._privateConstructor();
@@ -22,77 +22,43 @@ class AppDatabase {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    try {
-      await db.execute('''
+    await db.execute('''
     CREATE TABLE user (
-    id        INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_name TEXT    NOT NULL
-                      UNIQUE,
-    password  TEXT    NOT NULL
-)
-''');
-    } catch (e) {}
-    try {
-      await db.execute('''
-      CREATE TABLE category (
-    id    INTEGER PRIMARY KEY AUTOINCREMENT,
-    name  TEXT    UNIQUE
-                  NOT NULL,
-    color TEXT
-);
+      id        INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_name TEXT    NOT NULL UNIQUE,
+      password  TEXT    NOT NULL
+    )
+  ''');
 
-''');
-    } catch (e) {}
+    await db.execute('''
+    CREATE TABLE category (
+      id    INTEGER PRIMARY KEY AUTOINCREMENT,
+      name  TEXT    UNIQUE NOT NULL,
+      color TEXT
+    )
+  ''');
 
-    try {
-      await db.execute('''CREATE TABLE task (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id     INTEGER REFERENCES user (id) 
-                        NOT NULL,
-    category_id INTEGER REFERENCES category (id) 
-                        NOT NULL,
-    title       TEXT    NOT NULL,
-    description,
-    date        TEXT    NOT NULL,
-    priority    INTEGER DEFAULT (1) 
-);
-''');
-    } catch (e) {}
+    await db.execute('''
+    CREATE TABLE task (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id     INTEGER REFERENCES user (id) NOT NULL,
+      category_id INTEGER REFERENCES category (id) NOT NULL,
+      title       TEXT    NOT NULL,
+      description TEXT,
+      date        TEXT    NOT NULL,
+      priority    INTEGER DEFAULT (1),
+      is_done     INTEGER DEFAULT (0) NOT NULL
+    )
+  ''');
 
-    try {
-      await db.execute('''
-CREATE TABLE task (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id     INTEGER REFERENCES user (id) 
-                        NOT NULL,
-    category_id INTEGER REFERENCES category (id) 
-                        NOT NULL,
-    title       TEXT    NOT NULL,
-    description,
-    date        TEXT    NOT NULL,
-    priority    INTEGER DEFAULT (1),
-    is_done     INTEGER DEFAULT (0) 
-                        NOT NULL
-);
-''');
-    } catch (e) {}
-
-    try {} catch (e) {
-      await db.execute('''
-CREATE TABLE logged_user (
-    id INTEGER PRIMARY KEY
-             REFERENCES user (id) 
-);
-''');
-    }
+    await db.execute('''
+    CREATE TABLE logged_user (
+      id INTEGER PRIMARY KEY REFERENCES user (id)
+    )
+  ''');
   }
 
-  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
-    if (_databaseVersion == 3) {}
-    if (_databaseVersion == 4) {}
-    if (_databaseVersion == 5) {}
-    if (_databaseVersion == 6) {}
-  }
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {}
 
   Future<int> insertUser(Map<String, dynamic> row, String table) async {
     Database db = await database;

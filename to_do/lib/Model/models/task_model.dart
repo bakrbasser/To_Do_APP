@@ -1,12 +1,12 @@
 class TaskModel {
   final int? id;
   int userId = -1;
-  final int categoryId;
-  final String title;
-  final String? description;
-  final String date;
-  final int? priority;
-  final int isDone;
+  int categoryId;
+  String title;
+  String? description;
+  String date;
+  int? priority;
+  int isDone;
 
   bool get isDoneAsBool {
     if (isDone == 0) {

@@ -13,6 +13,18 @@ class DialogHelper {
     );
   }
 
+  static Future dialogShowerFuture(BuildContext context, Widget widget) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          child: widget,
+        );
+      },
+    );
+  }
+
   static Future<String?> dataPicker(BuildContext context) async {
     DateTime? date;
     date = await showDatePicker(

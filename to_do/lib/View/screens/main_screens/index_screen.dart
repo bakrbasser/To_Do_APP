@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do/Model_View/cubit/task/task_crud/task_cubit.dart';
-import 'package:to_do/View/visual_utils/buttons.dart';
-import 'package:to_do/View/visual_utils/themed_text.dart';
-import 'package:to_do/View/widgets/task_related.dart';
+import 'package:to_do/View/widgets/visual_utils/buttons.dart';
+import 'package:to_do/View/widgets/visual_utils/themed_text.dart';
+import 'package:to_do/View/widgets/specified_function_widgets/task_widgets.dart';
 
 class IndexScreen extends StatefulWidget {
   const IndexScreen({super.key});
@@ -14,6 +14,12 @@ class IndexScreen extends StatefulWidget {
 
 class _IndexScreenState extends State<IndexScreen> {
   @override
+  void initState() {
+    super.initState();
+    context.read<TaskCubit>().fetchTasks();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +28,11 @@ class _IndexScreenState extends State<IndexScreen> {
       ),
       body: BlocBuilder<TaskCubit, TaskState>(
         builder: (context, state) {
-          if (state is TaskStateWithList) {
+          if (state is LoadingTasks) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is TaskStateWithList) {
             return TasksList(tasks: state.tasks);
           } else {
             return const EmptyTasks();

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do/Model_View/cubit/login/login_cubit.dart';
 import 'package:to_do/Model_View/cubit/sign_up/sign_up_cubit.dart';
 import 'package:to_do/Model_View/storage/added_category.dart';
-import 'package:to_do/Model_View/storage/added_task.dart';
+import 'package:to_do/Model_View/storage/cached_task.dart';
 
 class AuthTextField extends StatelessWidget {
   const AuthTextField(
@@ -134,7 +134,7 @@ class TaskTitle extends TaskCrudTextField {
       : super(
           hintText: 'Title',
           onChanged: (p0) {
-            In_Memory_Task.title = p0;
+            Cached_Task_For_Adding_Fields.title = p0;
           },
         );
 }
@@ -144,7 +144,7 @@ class TaskDescription extends TaskCrudTextField {
       : super(
           hintText: 'Description',
           onChanged: (p0) {
-            In_Memory_Task.description = p0;
+            Cached_Task_For_Adding_Fields.description = p0;
           },
         );
 }

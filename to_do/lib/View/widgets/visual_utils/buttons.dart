@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do/Model/constants/enums.dart';
 import 'package:to_do/Model/models/category_model.dart';
 import 'package:to_do/Model_View/cubit/categories/categories_cubit.dart';
 import 'package:to_do/Model_View/cubit/login/login_cubit.dart';
@@ -7,14 +8,16 @@ import 'package:to_do/Model_View/cubit/priority/priority_cubit.dart';
 import 'package:to_do/Model_View/cubit/sign_up/sign_up_cubit.dart';
 import 'package:to_do/Model_View/cubit/task/task_crud/task_cubit.dart';
 import 'package:to_do/Model_View/storage/added_category.dart';
-import 'package:to_do/Model_View/storage/added_task.dart';
-import 'package:to_do/View/widgets/create_new_category.dart';
+import 'package:to_do/Model_View/storage/cached_task.dart';
+import 'package:to_do/Model_View/storage/in_memory_categories.dart';
+import 'package:to_do/View/screens/sub_screens/create_new_category.dart';
+import 'package:to_do/View/screens/sub_screens/task_details.dart';
 import 'package:to_do/View/widgets/dialogs/add_task_dialog.dart';
-import 'package:to_do/View/screens/login_screen.dart';
-import 'package:to_do/View/screens/register_screen.dart';
+import 'package:to_do/View/screens/auth_screens/login_screen.dart';
+import 'package:to_do/View/screens/auth_screens/register_screen.dart';
 import 'package:to_do/View/theme/theme.dart';
-import 'package:to_do/View/visual_utils/screen_size_helper.dart';
-import 'package:to_do/View/visual_utils/themed_text.dart';
+import 'package:to_do/general_utils/screen_size_helper.dart';
+import 'package:to_do/View/widgets/visual_utils/themed_text.dart';
 import 'package:to_do/View/widgets/dialogs/task_category_dialog.dart';
 import 'package:to_do/View/widgets/dialogs/task_priority_dialog.dart';
 import 'package:to_do/general_utils/dialog_helper.dart';
@@ -109,13 +112,40 @@ class ExitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        icon: const Icon(
-          Icons.arrow_back_ios_new,
-          color: Colors.white,
-        ));
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      icon: const Icon(
+        Icons.arrow_back_ios_new,
+        color: Colors.white,
+      ),
+    );
+  }
+}
+
+class ExitButtonInBox extends StatelessWidget {
+  const ExitButtonInBox({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+      },
+      child: SizedBox(
+        height: 50,
+        width: 50,
+        child: Container(
+          decoration: const BoxDecoration(
+              color: Color(0xff1D1D1D),
+              borderRadius: BorderRadius.all(Radius.circular(8))),
+          child: const Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -137,7 +167,7 @@ class OpenAddTaskScreen extends StatelessWidget {
       height: 60,
       child: IconButton.filled(
         onPressed: () {
-          In_Memory_Task.reset();
+          Cached_Task_For_Adding_Fields.reset();
           DialogHelper.dialogShower(context, const AddTaskDialog());
         },
         icon: const Icon(
@@ -159,7 +189,8 @@ class PickTaskDateButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          In_Memory_Task.date = await DialogHelper.dataPicker(context);
+          Cached_Task_For_Adding_Fields.date =
+              await DialogHelper.dataPicker(context);
         },
         icon: const Icon(
           Icons.watch_later_outlined,
@@ -175,7 +206,11 @@ class PickTaskCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
         onPressed: () {
-          DialogHelper.dialogShower(context, const TaskCategoryDialog());
+          DialogHelper.dialogShower(
+              context,
+              const TaskCategoryDialog(
+                mode: TaskFieldsModes.add,
+              ));
         },
         icon: const Icon(
           Icons.discount_outlined,
@@ -191,7 +226,8 @@ class PickTaskPriority extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
         onPressed: () {
-          DialogHelper.dialogShower(context, const TaskPriorityDialog());
+          DialogHelper.dialogShower(
+              context, const TaskPriorityDialog(mode: TaskFieldsModes.add));
         },
         icon: const Icon(
           Icons.flag_outlined,
@@ -258,6 +294,7 @@ class _TaskPriorityBoxState extends State<TaskPriorityBox> {
         onTap: () {
           BlocProvider.of<PriorityCubit>(context, listen: false)
               .selectPriority(widget.priority);
+          Cached_Task_For_Updating.instance.task.priority = widget.priority;
         },
         child: Container(
           height: ScreenSizeHelper.height_P(context, 0.08),
@@ -327,31 +364,58 @@ class ProceedButton extends StatelessWidget {
 }
 
 class SavePriorityButton extends StatelessWidget {
-  const SavePriorityButton({super.key});
+  const SavePriorityButton({super.key, required this.mode});
+  final TaskFieldsModes mode;
+
+  onPressed(BuildContext context) {
+    if (mode == TaskFieldsModes.add) {
+      int pr =
+          BlocProvider.of<PriorityCubit>(context, listen: false).savePriority();
+      Navigator.pop(context);
+      SnackBarHelper.showMessage(context, 'Priority is set to $pr');
+    } else {
+      BlocProvider.of<TaskCubit>(context, listen: false)
+          .updateTask(UpdateModes.priority);
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return ProceedButton(
       title: 'Save',
       onPressed: () {
-        int pr = BlocProvider.of<PriorityCubit>(context, listen: false)
-            .savePriority();
-        Navigator.pop(context);
-        SnackBarHelper.showMessage(context, 'Priority is set to $pr');
+        onPressed(context);
       },
     );
   }
 }
 
 class CategoryButton extends StatelessWidget {
-  const CategoryButton({super.key, required this.category});
+  onTap(BuildContext context) {
+    switch (mode) {
+      case TaskFieldsModes.add:
+        Cached_Task_For_Adding_Fields.categoryId = category.id;
+        break;
+      case TaskFieldsModes.modify:
+        {
+          Cached_Task_For_Updating.instance.task.categoryId = category.id;
+          context.read<TaskCubit>().updateTask(UpdateModes.category);
+        }
+
+      default:
+    }
+    Navigator.pop(context);
+  }
+
+  const CategoryButton({super.key, required this.category, required this.mode});
   final CategoryModel category;
+  final TaskFieldsModes mode;
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        In_Memory_Task.categoryId = category.id;
-        Navigator.pop(context);
+        onTap(context);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -382,7 +446,8 @@ class AddCategoryButton extends StatelessWidget {
       title: 'Add Category',
       onPressed: () {
         In_Memory_Category.reset();
-        NavigationHelper.navigateTo(context, const CreateNewCategory());
+        NavigationHelper.navigateToAndPassCubit<CategoriesCubit>(
+            context, const CreateNewCategory());
       },
     );
   }
@@ -400,5 +465,118 @@ class CreateCategoryButton extends StatelessWidget {
         BlocProvider.of<CategoriesCubit>(context, listen: false).addCategory();
       },
     );
+  }
+}
+
+class EditTitleAndDescriptionButton extends StatelessWidget {
+  const EditTitleAndDescriptionButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          //TODO: apply on pressed
+        },
+        icon: const ImageIcon(
+          AssetImage('assets/edit.png'),
+          color: Colors.white,
+        ));
+  }
+}
+
+class EditTaskProperty extends StatelessWidget {
+  const EditTaskProperty(
+      {super.key, required this.onPressed, required this.text});
+  final String text;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            shape:
+                BeveledRectangleBorder(borderRadius: BorderRadius.circular(3)),
+            backgroundColor: AppColors.instance.navigationBarBackground),
+        onPressed: onPressed,
+        child: BodyMediumText(text: text));
+  }
+}
+
+class DeleteTaskButton extends StatelessWidget {
+  const DeleteTaskButton({super.key, required this.id});
+  final int id;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        context.read<TaskCubit>().removeTask(id);
+        Navigator.pop(context);
+      },
+      child: const Row(
+        children: [
+          Icon(
+            Icons.delete_forever_outlined,
+            color: Color(0xffFF4949),
+          ),
+          SizedBox(width: 20),
+          BodyLargeText(
+            text: 'Delete Task',
+            color: Color(0xffFF4949),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class EditTaskDate extends StatelessWidget {
+  final String date;
+
+  const EditTaskDate({super.key, required this.date});
+  @override
+  Widget build(BuildContext context) {
+    return EditTaskProperty(
+      text: date,
+      onPressed: () async {
+        var localProvider = context.read<TaskCubit>();
+        var date = await DialogHelper.dataPicker(context);
+        Cached_Task_For_Updating.instance.task.date = date!;
+        localProvider.updateTask(UpdateModes.date);
+        NavigationHelper.openPage(
+            context, TaskDetails(task: Cached_Task_For_Updating.instance.task));
+      },
+    );
+  }
+}
+
+class EditTaskCategory extends StatelessWidget {
+  const EditTaskCategory({super.key, required this.categoryId});
+  final int categoryId;
+  @override
+  Widget build(BuildContext context) {
+    return EditTaskProperty(
+        onPressed: () async {
+          await DialogHelper.dialogShowerFuture(
+              context, const TaskCategoryDialog(mode: TaskFieldsModes.modify));
+          NavigationHelper.openPage(context,
+              TaskDetails(task: Cached_Task_For_Updating.instance.task));
+        },
+        text: In_Memory_Categories.instance.categoryName(categoryId));
+  }
+}
+
+class EditTaskPriority extends StatelessWidget {
+  const EditTaskPriority({super.key, required this.priority});
+  final int priority;
+  @override
+  Widget build(BuildContext context) {
+    return EditTaskProperty(
+        onPressed: () async {
+          await DialogHelper.dialogShowerFuture(
+              context, const TaskPriorityDialog(mode: TaskFieldsModes.modify));
+          NavigationHelper.openPage(context,
+              TaskDetails(task: Cached_Task_For_Updating.instance.task));
+        },
+        text: priority.toString());
   }
 }

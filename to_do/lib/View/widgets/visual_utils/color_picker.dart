@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:to_do/Model_View/storage/added_category.dart';
-import 'package:to_do/View/visual_utils/screen_size_helper.dart';
+import 'package:to_do/general_utils/screen_size_helper.dart';
 
 class BlockPickerListExample extends StatefulWidget {
   const BlockPickerListExample({super.key});

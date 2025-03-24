@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do/Model/constants/enums.dart';
 import 'package:to_do/Model_View/cubit/priority/priority_cubit.dart';
 import 'package:to_do/View/theme/theme.dart';
-import 'package:to_do/View/visual_utils/buttons.dart';
-import 'package:to_do/View/visual_utils/screen_size_helper.dart';
-import 'package:to_do/View/visual_utils/themed_text.dart';
+import 'package:to_do/View/widgets/visual_utils/buttons.dart';
+import 'package:to_do/general_utils/screen_size_helper.dart';
+import 'package:to_do/View/widgets/visual_utils/themed_text.dart';
 
 class TaskPriorityDialog extends StatelessWidget {
-  const TaskPriorityDialog({super.key});
+  const TaskPriorityDialog({super.key, required this.mode});
+
+  final TaskFieldsModes mode;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,7 @@ class TaskPriorityDialog extends StatelessWidget {
               SizedBox(height: ScreenSizeHelper.height_P(context, 0.03)),
               const PrioritiesBoxesGrid(),
               const Spacer(),
-              const PriorityButtons()
+              PriorityButtons(mode: mode)
             ],
           ),
         ),
@@ -59,12 +62,16 @@ class PrioritiesBoxesGrid extends StatelessWidget {
 }
 
 class PriorityButtons extends StatelessWidget {
-  const PriorityButtons({super.key});
-
+  const PriorityButtons({super.key, required this.mode});
+  final TaskFieldsModes mode;
   @override
   Widget build(BuildContext context) {
-    return const Row(
-      children: [CancelButton(), Spacer(), SavePriorityButton()],
+    return Row(
+      children: [
+        const CancelButton(),
+        const Spacer(),
+        SavePriorityButton(mode: mode)
+      ],
     );
   }
 }

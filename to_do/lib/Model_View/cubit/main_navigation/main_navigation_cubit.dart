@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:to_do/View/screens/index_screen.dart';
-import 'package:to_do/View/screens/calendar_screen.dart';
-import 'package:to_do/View/screens/focus_screen.dart';
-import 'package:to_do/View/screens/profile_screen.dart';
+import 'package:to_do/View/screens/main_screens/index_screen.dart';
+import 'package:to_do/View/screens/main_screens/calendar_screen.dart';
+import 'package:to_do/View/screens/main_screens/focus_screen.dart';
+import 'package:to_do/View/screens/main_screens/profile_screen.dart';
 
 part 'main_navigation_state.dart';
 

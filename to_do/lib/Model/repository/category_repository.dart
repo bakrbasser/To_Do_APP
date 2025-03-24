@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:to_do/Model/database/database.dart';
 import 'package:to_do/Model/models/category_model.dart';
+import 'package:to_do/Model_View/storage/in_memory_categories.dart';
 
 class CategoryRepository {
   CategoryRepository._privateConstructor();
@@ -25,6 +26,7 @@ INSERT INTO category (
                          '${category.color}'
                      );
 ''');
+      In_Memory_Categories.instance.addCategories(await fetchLastCategory());
       return true;
     } catch (e) {
       return false;
@@ -46,5 +48,12 @@ INSERT INTO category (
     } catch (e) {
       return false;
     }
+  }
+
+  Future<CategoryModel> fetchLastCategory() async {
+    Database db = await AppDatabase.instance.database;
+    var res =
+        await db.rawQuery('SELECT * FROM category ORDER BY id DESC LIMIT 1;');
+    return CategoryModel.fromJson(res[0]);
   }
 }

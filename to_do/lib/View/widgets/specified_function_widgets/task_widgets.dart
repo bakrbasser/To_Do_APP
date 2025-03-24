@@ -1,33 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do/Model/models/category_model.dart';
 import 'package:to_do/Model/models/task_model.dart';
+import 'package:to_do/Model_View/cubit/task/task_crud/task_cubit.dart';
+import 'package:to_do/Model_View/storage/cached_task.dart';
+import 'package:to_do/Model_View/storage/in_memory_categories.dart';
+import 'package:to_do/View/screens/sub_screens/task_details.dart';
 import 'package:to_do/View/theme/theme.dart';
-import 'package:to_do/View/visual_utils/screen_size_helper.dart';
-import 'package:to_do/View/visual_utils/themed_text.dart';
+import 'package:to_do/View/widgets/visual_utils/buttons.dart';
+import 'package:to_do/general_utils/navigation_helper.dart';
+import 'package:to_do/general_utils/screen_size_helper.dart';
+import 'package:to_do/View/widgets/visual_utils/themed_text.dart';
 
 //Task Card Related Widgets
 
 class TaskCard extends StatelessWidget {
-  const TaskCard({super.key, required this.task});
+  const TaskCard({super.key, required this.task, required this.index});
   final TaskModel task;
-
+  final int index;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: ScreenSizeHelper.height_P(context, 0.1),
-      child: Container(
-        color: AppColors.instance.navigationBarBackground,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TaskCheckBox(isDone: task.isDoneAsBool),
-            TitleAndDate(title: task.title, date: task.formattedDate),
-            CategoryAndPriority(
-                category: CategoryModel(
-                    id: 1, name: 'University', color: '0xff8687E7'),
-                priority: task.priority!)
-          ],
+    return InkWell(
+      onTap: () {
+        Cached_Task_For_Updating.instance.index = index;
+        NavigationHelper.navigateTo(context, TaskDetails(task: task));
+      },
+      child: SizedBox(
+        height: ScreenSizeHelper.height_P(context, 0.1),
+        child: Container(
+          color: AppColors.instance.navigationBarBackground,
+          child: Padding(
+            padding: const EdgeInsets.all(1),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                TaskCheckBox(
+                  isDone: task.isDoneAsBool,
+                  id: task.id!,
+                ),
+                TitleAndDate(title: task.title, date: task.formattedDate),
+                const Spacer(),
+                CategoryAndPriority(
+                    category:
+                        In_Memory_Categories.instance.category(task.categoryId),
+                    priority: task.priority!)
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -35,17 +55,23 @@ class TaskCard extends StatelessWidget {
 }
 
 class TaskCheckBox extends StatefulWidget {
-  const TaskCheckBox({super.key, required this.isDone});
+  const TaskCheckBox({super.key, required this.isDone, required this.id});
   final bool isDone;
+  final int id;
+
   @override
   State<TaskCheckBox> createState() => _TaskCheckBoxState();
 }
 
 class _TaskCheckBoxState extends State<TaskCheckBox> {
   late bool isChecked = widget.isDone;
-
   void onChanged(bool? value) {
-    // TODO: Handle task completion
+    if (value!) {
+      BlocProvider.of<TaskCubit>(context, listen: false)
+          .completeTask(widget.id);
+    } else {
+      BlocProvider.of<TaskCubit>(context, listen: false).undoneTask(widget.id);
+    }
     setState(() {
       isChecked = value!;
     });
@@ -167,7 +193,28 @@ class TasksList extends StatelessWidget {
       itemCount: tasks.length,
       itemBuilder: (context, index) => TaskCard(
         task: tasks[index],
+        index: index,
       ),
+    );
+  }
+}
+
+class CheckTitleEditRow extends StatelessWidget {
+  const CheckTitleEditRow(
+      {super.key, required this.isDone, required this.id, required this.title});
+  final bool isDone;
+  final int id;
+  final String title;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        TaskCheckBox(isDone: isDone, id: id),
+        SizedBox(width: ScreenSizeHelper.width_P(context, 0.05)),
+        BodyLargeText(text: title),
+        const Spacer(),
+        const EditTitleAndDescriptionButton()
+      ],
     );
   }
 }

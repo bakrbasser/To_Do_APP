@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do/Model_View/cubit/login/login_cubit.dart';
-import 'package:to_do/View/screens/main_screen.dart';
-import 'package:to_do/View/visual_utils/buttons.dart';
-import 'package:to_do/View/visual_utils/screen_size_helper.dart';
-import 'package:to_do/View/visual_utils/text_fields.dart';
-import 'package:to_do/View/visual_utils/themed_text.dart';
+import 'package:to_do/Model_View/cubit/sign_up/sign_up_cubit.dart';
+import 'package:to_do/View/screens/auth_screens/login_screen.dart';
+import 'package:to_do/View/widgets/visual_utils/buttons.dart';
+import 'package:to_do/general_utils/screen_size_helper.dart';
+import 'package:to_do/View/widgets/visual_utils/text_fields.dart';
+import 'package:to_do/View/widgets/visual_utils/themed_text.dart';
 import 'package:to_do/general_utils/navigation_helper.dart';
 import 'package:to_do/general_utils/snack_bar_helper.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(),
-      child: LoginListener(
+      create: (context) => RegisterCubit(),
+      child: RegisterListener(
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(leading: const ExitButton()),
@@ -27,13 +27,13 @@ class LoginScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: ScreenSizeHelper.height_P(context, 0.06)),
-                  const TitleLargeText(text: 'Login'),
+                  const TitleLargeText(text: 'Register'),
                   SizedBox(height: ScreenSizeHelper.height_P(context, 0.06)),
-                  const LoginForm(), // Extracted form fields
+                  const RegisterForm(), // Extracted form fields
                   SizedBox(height: ScreenSizeHelper.height_P(context, 0.08)),
-                  const LoginButton(),
+                  const RegisterButton(),
                   SizedBox(height: ScreenSizeHelper.height_P(context, 0.015)),
-                  const DontHaveAccount(),
+                  const AlreadyHaveAccount(),
                 ],
               ),
             ),
@@ -44,23 +44,25 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-// Widget to handle Bloc state changes (Extracted for readability)
-class LoginListener extends StatelessWidget {
+class RegisterListener extends StatelessWidget {
   final Widget child;
 
-  const LoginListener({super.key, required this.child});
+  const RegisterListener({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginCubit, LoginState>(
+    return BlocListener<RegisterCubit, RegisterState>(
       listener: (context, state) {
-        if (state is LoginFailed) {
-          SnackBarHelper.showMessage(context, 'User is not found');
-        } else if (state is EmptyField) {
+        if (state is RegisterFailed) {
+          SnackBarHelper.showMessage(context, 'Username already exists');
+        } else if (state is IncompatiblePassword) {
+          SnackBarHelper.showMessage(
+              context, 'The two passwords are not identical');
+        } else if (state is Registered) {
+          SnackBarHelper.showMessage(context, 'Registered Successfully');
+          NavigationHelper.openPage(context, const LoginScreen());
+        } else if (state is MissingField) {
           SnackBarHelper.showMessage(context, 'One or more fields are empty');
-        } else if (state is LoggedIn) {
-          SnackBarHelper.showMessage(context, 'Registered');
-          NavigationHelper.openPage(context, const MainScreen());
         }
       },
       child: child,
@@ -69,8 +71,8 @@ class LoginListener extends StatelessWidget {
 }
 
 // Widget for the form fields (Extracted for maintainability)
-class LoginForm extends StatelessWidget {
-  const LoginForm({super.key});
+class RegisterForm extends StatelessWidget {
+  const RegisterForm({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,11 +81,15 @@ class LoginForm extends StatelessWidget {
       children: [
         const BodyMediumText(text: 'Username'),
         SizedBox(height: ScreenSizeHelper.height_P(context, 0.015)),
-        const LoginUsername(),
+        const RegisterUsername(),
         SizedBox(height: ScreenSizeHelper.height_P(context, 0.03)),
         const BodyMediumText(text: 'Password'),
         SizedBox(height: ScreenSizeHelper.height_P(context, 0.015)),
-        const LoginPassword(),
+        const RegisterPassword(),
+        SizedBox(height: ScreenSizeHelper.height_P(context, 0.03)),
+        const BodyMediumText(text: 'Confirm Password'),
+        SizedBox(height: ScreenSizeHelper.height_P(context, 0.015)),
+        const RegisterConfirmPassword(),
       ],
     );
   }
