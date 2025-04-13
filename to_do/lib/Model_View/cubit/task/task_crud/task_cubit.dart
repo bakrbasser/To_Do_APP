@@ -15,6 +15,8 @@ class TaskCubit extends Cubit<TaskState> {
 
   List<TaskModel> tasks = [];
 
+  List<TaskModel> emittedTasks = [];
+
   Future fetchTasks() async {
     emit(LoadingTasks());
     int id = await loggedUserRepository.lastLoggedUserId();
@@ -22,7 +24,8 @@ class TaskCubit extends Cubit<TaskState> {
     if (tasks.isEmpty) {
       emit(EmptyTasks());
     } else {
-      emit(LoadedTasks(tasks: tasks));
+      emittedTasks = tasks;
+      emit(LoadedTasks(tasks: emittedTasks));
     }
   }
 
@@ -35,7 +38,8 @@ class TaskCubit extends Cubit<TaskState> {
       if (await taskRepository.addTask(task)) {
         var addedTask = await taskRepository.fetchLastTaskAfterAdding();
         tasks.add(addedTask);
-        emit(TaskAddedSuccessfully(tasks: tasks));
+        emittedTasks.add(addedTask);
+        emit(TaskAddedSuccessfully(tasks: emittedTasks));
       } else {
         emit(OperationFailed(message: 'Something wrong happened'));
       }
@@ -53,13 +57,15 @@ class TaskCubit extends Cubit<TaskState> {
   Future removeTask(int id) async {
     if (await taskRepository.removeTask(id)) {
       tasks.removeWhere((element) => element.id == id);
-      emit(TaskDeletedSuccessfully(tasks: tasks));
+      emit(TaskDeletedSuccessfully(tasks: emittedTasks));
     } else {
       emit(OperationFailed(message: 'Something wrong happened'));
     }
   }
 
   Future<void> updateTask(UpdateModes mode) async {
+    //TODO: Handle Editing while filtered
+
     var task = Cached_Task_For_Updating.instance.task;
     int index = Cached_Task_For_Updating.instance.index;
     bool isUpdated = false;
@@ -69,12 +75,14 @@ class TaskCubit extends Cubit<TaskState> {
         isUpdated =
             await taskRepository.updateCategoryId(task.id!, task.categoryId);
         break;
-      case UpdateModes.title:
-        isUpdated = await taskRepository.updateTitle(task.id!, task.title);
-        break;
-      case UpdateModes.description:
-        isUpdated =
-            await taskRepository.updateDescription(task.id!, task.description!);
+      case UpdateModes.titleAndDescription:
+        List<bool> res = await Future.wait([
+          taskRepository.updateTitle(task.id!, task.title),
+          taskRepository.updateDescription(task.id!, task.description!)
+        ]);
+        isUpdated = res.reduce(
+          (value, element) => value && element,
+        );
         break;
       case UpdateModes.date:
         isUpdated = await taskRepository.updateDate(task.id!, task.date);
@@ -94,6 +102,64 @@ class TaskCubit extends Cubit<TaskState> {
       emit(TaskUpdatedSuccessfully(tasks: tasks));
     } else {
       emit(OperationFailed(message: 'Something wrong happened'));
+    }
+  }
+
+  void sortTasks(TasksSortModes sortMode) {
+    // Create a copy of the original list to avoid modifying it directly
+
+    switch (sortMode) {
+      case TasksSortModes.byTitle:
+        emittedTasks.sort((a, b) => a.title.compareTo(b.title));
+        break;
+      case TasksSortModes.byDescription:
+        emittedTasks.sort((a, b) {
+          final descA = a.description ?? '';
+          final descB = b.description ?? '';
+          return descA.compareTo(descB);
+        });
+        break;
+      case TasksSortModes.byDate:
+        emittedTasks.sort((a, b) => a.date.compareTo(b.date));
+        break;
+      case TasksSortModes.byPriority:
+        emittedTasks.sort((a, b) {
+          final priorityA = a.priority ?? 0;
+          final priorityB = b.priority ?? 0;
+          // Sort in descending order (higher priority first)
+          return priorityB.compareTo(priorityA);
+        });
+        break;
+      case TasksSortModes.byCategory:
+        emittedTasks.sort((a, b) => a.categoryId.compareTo(b.categoryId));
+        break;
+    }
+    emit(
+      TaskSortedSuccessfully(tasks: emittedTasks),
+    );
+  }
+
+  void filterTasksByTitle(String searchQuery) {
+    if (searchQuery.isEmpty) {
+      emit(TasksFiltered(tasks: tasks));
+    } else {
+      emittedTasks = tasks.where((task) {
+        final taskTitle = task.title.toLowerCase();
+        final query = searchQuery.toLowerCase();
+
+        return taskTitle.contains(query);
+      }).toList();
+      emit(TasksFiltered(tasks: emittedTasks));
+    }
+  }
+
+  void filterTaskByDate(String date) {
+    emittedTasks =
+        tasks.where((element) => element.formattedDate == date).toList();
+    if (emittedTasks.isNotEmpty) {
+      emit(TasksFiltered(tasks: emittedTasks));
+    } else {
+      emit(EmptyTasks());
     }
   }
 }

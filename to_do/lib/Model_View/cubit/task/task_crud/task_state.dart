@@ -36,3 +36,11 @@ class TaskAddedSuccessfully extends TaskStateWithList {
 class TaskUpdatedSuccessfully extends TaskStateWithList {
   TaskUpdatedSuccessfully({required super.tasks});
 }
+
+class TaskSortedSuccessfully extends TaskStateWithList {
+  TaskSortedSuccessfully({required super.tasks});
+}
+
+class TasksFiltered extends TaskStateWithList {
+  TasksFiltered({required super.tasks});
+}

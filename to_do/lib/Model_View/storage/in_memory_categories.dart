@@ -1,6 +1,7 @@
 import 'package:to_do/Model/models/category_model.dart';
 import 'package:to_do/Model/repository/category_repository.dart';
 
+// ignore: camel_case_types
 class In_Memory_Categories {
   In_Memory_Categories._private();
 

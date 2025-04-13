@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do/Model/constants/enums.dart';
 import 'package:to_do/Model_View/cubit/login/login_cubit.dart';
 import 'package:to_do/Model_View/cubit/sign_up/sign_up_cubit.dart';
+import 'package:to_do/Model_View/cubit/task/task_crud/task_cubit.dart';
 import 'package:to_do/Model_View/storage/added_category.dart';
 import 'package:to_do/Model_View/storage/cached_task.dart';
 
-class AuthTextField extends StatelessWidget {
-  const AuthTextField(
+class BorderedTextField extends StatelessWidget {
+  const BorderedTextField(
       {super.key,
       required this.hintText,
-      required this.type,
-      required this.obscureText,
+      this.type = TextInputType.text,
+      this.obscureText = false,
       required this.onChanged});
   final String hintText;
   final TextInputType type;
@@ -32,8 +34,8 @@ class AuthTextField extends StatelessWidget {
   }
 }
 
-class TaskCrudTextField extends StatelessWidget {
-  const TaskCrudTextField(
+class ImborderedTextField extends StatelessWidget {
+  const ImborderedTextField(
       {super.key, required this.hintText, required this.onChanged});
   final String hintText;
   final Function(String) onChanged;
@@ -52,20 +54,31 @@ class TaskCrudTextField extends StatelessWidget {
   }
 }
 
-class UsernameTextField extends AuthTextField {
+class UsernameTextField extends BorderedTextField {
   const UsernameTextField({super.key, required super.onChanged})
       : super(
-            hintText: 'Enter Your Username',
-            type: TextInputType.emailAddress,
-            obscureText: false);
+            hintText: 'Enter Your Username', type: TextInputType.emailAddress);
 }
 
-class PasswordTextField extends AuthTextField {
+class PasswordTextField extends BorderedTextField {
   const PasswordTextField({super.key, required super.onChanged})
       : super(
             hintText: 'Enter Your Password',
             type: TextInputType.visiblePassword,
             obscureText: true);
+}
+
+class FilterTasksTextField extends StatelessWidget {
+  const FilterTasksTextField({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return BorderedTextField(
+      hintText: 'Search task by title...',
+      onChanged: (p0) {
+        context.read<TaskCubit>().filterTasksByTitle(p0);
+      },
+    );
+  }
 }
 
 class LoginUsername extends StatelessWidget {
@@ -129,27 +142,38 @@ class RegisterConfirmPassword extends StatelessWidget {
   }
 }
 
-class TaskTitle extends TaskCrudTextField {
-  TaskTitle({super.key})
+class TaskTitle extends ImborderedTextField {
+  final TaskFieldsModes mode;
+
+  TaskTitle({super.key, required this.mode})
       : super(
           hintText: 'Title',
           onChanged: (p0) {
-            Cached_Task_For_Adding_Fields.title = p0;
+            if (mode == TaskFieldsModes.add) {
+              Cached_Task_For_Adding_Fields.title = p0;
+            } else if (mode == TaskFieldsModes.modify) {
+              Cached_Task_For_Updating.instance.task.title = p0;
+            }
           },
         );
 }
 
-class TaskDescription extends TaskCrudTextField {
-  TaskDescription({super.key})
+class TaskDescription extends ImborderedTextField {
+  final TaskFieldsModes mode;
+  TaskDescription({super.key, required this.mode})
       : super(
           hintText: 'Description',
           onChanged: (p0) {
-            Cached_Task_For_Adding_Fields.description = p0;
+            if (mode == TaskFieldsModes.add) {
+              Cached_Task_For_Adding_Fields.description = p0;
+            } else if (mode == TaskFieldsModes.modify) {
+              Cached_Task_For_Updating.instance.task.description = p0;
+            }
           },
         );
 }
 
-class CategoryNameTextField extends AuthTextField {
+class CategoryNameTextField extends BorderedTextField {
   CategoryNameTextField({super.key})
       : super(
             hintText: 'Category name',

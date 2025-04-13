@@ -6,17 +6,22 @@ class AppTheme {
   static AppTheme instance = AppTheme._privateConstructor();
 
   late ThemeData theme = ThemeData(
-      scaffoldBackgroundColor: AppColors.instance.screensBackground,
-      textTheme: AppFonts.instance.textTheme,
-      appBarTheme: AppBarTheme(
-          backgroundColor: AppColors.instance.screensBackground,
-          foregroundColor: Colors.white,
-          centerTitle: true),
-      navigationBarTheme: navigationBarTheme,
-      checkboxTheme: checkboxTheme);
+    scaffoldBackgroundColor: AppColors.instance.screensBackground,
+    textTheme: AppFonts.instance.textTheme,
+    appBarTheme: AppBarTheme(
+        backgroundColor: AppColors.instance.screensBackground,
+        foregroundColor: Colors.white,
+        centerTitle: true),
+    navigationBarTheme: navigationBarTheme,
+    checkboxTheme: checkboxTheme,
+    listTileTheme: listTileTheme,
+    iconTheme: iconTheme,
+  );
+
+  IconThemeData iconTheme = const IconThemeData(color: Colors.white);
 
   NavigationBarThemeData navigationBarTheme = NavigationBarThemeData(
-      backgroundColor: AppColors.instance.navigationBarBackground,
+      backgroundColor: AppColors.instance.grey,
       labelTextStyle: WidgetStatePropertyAll(AppFonts.instance._bodyMedium),
       iconTheme: const WidgetStatePropertyAll(
           IconThemeData(color: Colors.white, size: 30)),
@@ -26,6 +31,12 @@ class AppTheme {
     shape: CircleBorder(),
     side: BorderSide(color: Colors.white),
   );
+
+  ListTileThemeData listTileTheme = ListTileThemeData(
+    iconColor: AppColors.instance.appPurple,
+    tileColor: AppColors.instance.miniButtons,
+    shape: const BeveledRectangleBorder(),
+  );
 }
 
 class AppColors {
@@ -33,10 +44,11 @@ class AppColors {
   static AppColors instance = AppColors._privateConstructor();
 
   final Color screensBackground = const Color(0xff121212);
-  final Color navigationBarBackground = const Color(0xff363636);
+  final Color grey = const Color(0xff363636);
   final Color appPurple = const Color(0xff8687E7);
-  final Color priorityBox = const Color(0xff272727);
+  final Color miniButtons = const Color(0xff272727);
   final Color lessWhite = const Color(0xffAFAFAF);
+  final Color neutralGray = const Color(0xff555555);
 }
 
 class AppFonts {

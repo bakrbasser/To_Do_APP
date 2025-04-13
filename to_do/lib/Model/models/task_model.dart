@@ -1,3 +1,5 @@
+import 'package:to_do/general_utils/local_date_utilities.dart';
+
 class TaskModel {
   final int? id;
   int userId = -1;
@@ -17,8 +19,7 @@ class TaskModel {
   }
 
   String get formattedDate {
-    var temp = DateTime.parse(date);
-    return '${temp.year}/${temp.month}/${temp.day}';
+    return LocalDateUtilities.formattedDate(DateTime.parse(date));
   }
 
   TaskModel(

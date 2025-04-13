@@ -1,0 +1,2 @@
+C:/Users/BAKER ALBASSER/Desktop/todo Project/to_do/android/app/.cxx/Debug/21w4j242/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/BAKER ALBASSER/Desktop/todo Project/to_do/android/app/.cxx/Debug/21w4j242/armeabi-v7a/CMakeFiles/rebuild_cache.dir

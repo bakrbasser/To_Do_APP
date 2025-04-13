@@ -55,7 +55,7 @@ class _BlockPickerListExampleState extends State<BlockPickerListExample> {
               color: colors[index],
               margin: const EdgeInsets.all(8),
               child: selectedColor == colors[index]
-                  ? const Icon(Icons.check, color: Colors.white)
+                  ? const Icon(Icons.check)
                   : null,
             ),
           );

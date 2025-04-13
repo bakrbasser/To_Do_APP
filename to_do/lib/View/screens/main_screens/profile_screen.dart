@@ -8,7 +8,26 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const BodyMediumText(text: 'Profile'),
+        title: const BodyLargeText(text: 'Profile'),
+      ),
+      body: const Column(
+          // children: [const ProfileImage(), BodyMediumText(text: In_Memory_Logged_User.instance)],
+          ),
+    );
+  }
+}
+
+class ProfileImage extends StatelessWidget {
+  const ProfileImage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: CircleAvatar(
+        radius: 50,
+        backgroundImage: AssetImage(
+          'assets/person.png',
+        ),
       ),
     );
   }

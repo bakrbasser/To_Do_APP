@@ -1,8 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:to_do/Model/constants/enums.dart';
 import 'package:to_do/Model/models/category_model.dart';
 import 'package:to_do/Model_View/cubit/categories/categories_cubit.dart';
+import 'package:to_do/Model_View/cubit/custom_calendar/custom_calendar_cubit.dart';
+import 'package:to_do/Model_View/cubit/focus_mode/focus_mode_cubit.dart';
 import 'package:to_do/Model_View/cubit/login/login_cubit.dart';
 import 'package:to_do/Model_View/cubit/priority/priority_cubit.dart';
 import 'package:to_do/Model_View/cubit/sign_up/sign_up_cubit.dart';
@@ -16,6 +21,9 @@ import 'package:to_do/View/widgets/dialogs/add_task_dialog.dart';
 import 'package:to_do/View/screens/auth_screens/login_screen.dart';
 import 'package:to_do/View/screens/auth_screens/register_screen.dart';
 import 'package:to_do/View/theme/theme.dart';
+import 'package:to_do/View/widgets/dialogs/sort_tasks_dialog.dart';
+import 'package:to_do/View/widgets/visual_utils/boxes.dart';
+import 'package:to_do/general_utils/local_date_utilities.dart';
 import 'package:to_do/general_utils/screen_size_helper.dart';
 import 'package:to_do/View/widgets/visual_utils/themed_text.dart';
 import 'package:to_do/View/widgets/dialogs/task_category_dialog.dart';
@@ -117,7 +125,6 @@ class ExitButton extends StatelessWidget {
       },
       icon: const Icon(
         Icons.arrow_back_ios_new,
-        color: Colors.white,
       ),
     );
   }
@@ -141,7 +148,6 @@ class ExitButtonInBox extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(8))),
           child: const Icon(
             Icons.close,
-            color: Colors.white,
           ),
         ),
       ),
@@ -154,7 +160,11 @@ class SortTasksButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(onPressed: () {}, icon: const Icon(Icons.sort));
+    return IconButton(
+        onPressed: () {
+          DialogHelper.dialogShower(context, const SortTasksDialog());
+        },
+        icon: const Icon(Icons.sort));
   }
 }
 
@@ -190,11 +200,11 @@ class PickTaskDateButton extends StatelessWidget {
     return IconButton(
         onPressed: () async {
           Cached_Task_For_Adding_Fields.date =
-              await DialogHelper.dataPicker(context);
+              await DialogHelper.dataPickerForTask(
+                  context, TaskFieldsModes.add);
         },
         icon: const Icon(
           Icons.watch_later_outlined,
-          color: Colors.white,
         ));
   }
 }
@@ -214,7 +224,6 @@ class PickTaskCategory extends StatelessWidget {
         },
         icon: const Icon(
           Icons.discount_outlined,
-          color: Colors.white,
         ));
   }
 }
@@ -231,7 +240,6 @@ class PickTaskPriority extends StatelessWidget {
         },
         icon: const Icon(
           Icons.flag_outlined,
-          color: Colors.white,
         ));
   }
 }
@@ -264,15 +272,17 @@ class AddTaskButton extends StatelessWidget {
 }
 
 class TaskPriorityBox extends StatefulWidget {
-  const TaskPriorityBox({super.key, required this.priority});
+  const TaskPriorityBox(
+      {super.key, required this.priority, required this.mode});
   final int priority;
+  final TaskFieldsModes mode;
 
   @override
   State<TaskPriorityBox> createState() => _TaskPriorityBoxState();
 }
 
 class _TaskPriorityBoxState extends State<TaskPriorityBox> {
-  Color backgroundColor = AppColors.instance.priorityBox;
+  Color backgroundColor = AppColors.instance.miniButtons;
 
   @override
   Widget build(BuildContext context) {
@@ -281,11 +291,7 @@ class _TaskPriorityBoxState extends State<TaskPriorityBox> {
         if (state is SelectedPriority) {
           if (state.priority != widget.priority) {
             setState(() {
-              backgroundColor = AppColors.instance.priorityBox;
-            });
-          } else {
-            setState(() {
-              backgroundColor = AppColors.instance.appPurple;
+              backgroundColor = AppColors.instance.miniButtons;
             });
           }
         }
@@ -294,15 +300,18 @@ class _TaskPriorityBoxState extends State<TaskPriorityBox> {
         onTap: () {
           BlocProvider.of<PriorityCubit>(context, listen: false)
               .selectPriority(widget.priority);
-          Cached_Task_For_Updating.instance.task.priority = widget.priority;
+          try {
+            Cached_Task_For_Updating.instance.task.priority = widget.priority;
+            // ignore: empty_catches
+          } catch (e) {}
+          setState(() {
+            backgroundColor = AppColors.instance.appPurple;
+          });
         },
-        child: Container(
-          height: ScreenSizeHelper.height_P(context, 0.08),
-          width: ScreenSizeHelper.height_P(context, 0.08),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(5),
-          ),
+        child: BoxWithCircularCornersForSmallButtons(
+          heightPortionFromScreenHeight: 1,
+          horizontalPadding: 1,
+          color: backgroundColor,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -340,15 +349,15 @@ class ProceedButton extends StatelessWidget {
       {super.key,
       required this.title,
       required this.onPressed,
-      this.sizeOfHeight = 0.35});
+      this.sizeOfWidthFromScreenSize = 0.35});
   final String title;
   final VoidCallback onPressed;
-  final double sizeOfHeight;
+  final double sizeOfWidthFromScreenSize;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: ScreenSizeHelper.width_P(context, sizeOfHeight),
+      width: ScreenSizeHelper.width_P(context, sizeOfWidthFromScreenSize),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.instance.appPurple,
@@ -442,7 +451,7 @@ class AddCategoryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProceedButton(
-      sizeOfHeight: 0.8,
+      sizeOfWidthFromScreenSize: 0.8,
       title: 'Add Category',
       onPressed: () {
         In_Memory_Category.reset();
@@ -459,7 +468,7 @@ class CreateCategoryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProceedButton(
-      sizeOfHeight: 0.5,
+      sizeOfWidthFromScreenSize: 0.5,
       title: 'Create Category',
       onPressed: () {
         BlocProvider.of<CategoriesCubit>(context, listen: false).addCategory();
@@ -475,11 +484,10 @@ class EditTitleAndDescriptionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
         onPressed: () {
-          //TODO: apply on pressed
+          DialogHelper.dialogShower(context, const ModifyTitleAndDescription());
         },
         icon: const ImageIcon(
           AssetImage('assets/edit.png'),
-          color: Colors.white,
         ));
   }
 }
@@ -496,7 +504,7 @@ class EditTaskProperty extends StatelessWidget {
         style: ElevatedButton.styleFrom(
             shape:
                 BeveledRectangleBorder(borderRadius: BorderRadius.circular(3)),
-            backgroundColor: AppColors.instance.navigationBarBackground),
+            backgroundColor: AppColors.instance.grey),
         onPressed: onPressed,
         child: BodyMediumText(text: text));
   }
@@ -539,7 +547,8 @@ class EditTaskDate extends StatelessWidget {
       text: date,
       onPressed: () async {
         var localProvider = context.read<TaskCubit>();
-        var date = await DialogHelper.dataPicker(context);
+        var date = await DialogHelper.dataPickerForTask(
+            context, TaskFieldsModes.modify);
         Cached_Task_For_Updating.instance.task.date = date!;
         localProvider.updateTask(UpdateModes.date);
         NavigationHelper.openPage(
@@ -578,5 +587,151 @@ class EditTaskPriority extends StatelessWidget {
               TaskDetails(task: Cached_Task_For_Updating.instance.task));
         },
         text: priority.toString());
+  }
+}
+
+class SaveTitleAndDescriptionEdit extends StatelessWidget {
+  const SaveTitleAndDescriptionEdit({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ProceedButton(
+      title: 'Save',
+      onPressed: () {
+        context.read<TaskCubit>().updateTask(UpdateModes.titleAndDescription);
+        Navigator.pop(context);
+        NavigationHelper.openPage(
+            context, TaskDetails(task: Cached_Task_For_Updating.instance.task));
+      },
+    );
+  }
+}
+
+class SelectPreviousMonthButton extends StatelessWidget {
+  const SelectPreviousMonthButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          context.read<CustomCalendarCubit>().selectPreviousMonth();
+        },
+        icon: const Icon(Icons.arrow_back_ios));
+  }
+}
+
+class SelectNextMonthButton extends StatelessWidget {
+  const SelectNextMonthButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          context.read<CustomCalendarCubit>().selectNextMonth();
+        },
+        icon: const Icon(Icons.arrow_forward_ios));
+  }
+}
+
+class CustomDateDayButton extends StatelessWidget {
+  const CustomDateDayButton({super.key, required this.date});
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        context.read<CustomCalendarCubit>().pickDate(date.day);
+        context
+            .read<TaskCubit>()
+            .filterTaskByDate(LocalDateUtilities.formattedDate(date));
+      },
+      child: BlocBuilder<CustomCalendarCubit, CustomCalendarState>(
+        builder: (context, state) {
+          {
+            if (state.date.day == date.day) {
+              return BoxWithCircularCornersForSmallButtons(
+                color: AppColors.instance.appPurple,
+                child: _CustomDateDayButtonBody(date: date),
+              );
+            } else {
+              return BoxWithCircularCornersForSmallButtons(
+                child: _CustomDateDayButtonBody(date: date),
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
+}
+
+class _CustomDateDayButtonBody extends StatelessWidget {
+  const _CustomDateDayButtonBody({
+    required this.date,
+  });
+
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TitleMediumText(text: DateFormat('E').format(date)),
+        const Spacer(),
+        TitleMediumText(text: date.day.toString())
+      ],
+    );
+  }
+}
+
+class StartStopFocusingButton extends StatelessWidget {
+  const StartStopFocusingButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FocusModeCubit, FocusModeState>(
+      builder: (context, state) {
+        if (state is Focusing) {
+          return const StopFocusing();
+        } else {
+          return const StartFocusing();
+        }
+      },
+    );
+  }
+}
+
+class StartFocusing extends StatelessWidget {
+  const StartFocusing({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ProceedButton(
+      sizeOfWidthFromScreenSize: 0.5,
+      title: 'Start Focusing',
+      onPressed: () {
+        context.read<FocusModeCubit>().startFocusing();
+      },
+    );
+  }
+}
+
+class StopFocusing extends StatelessWidget {
+  const StopFocusing({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ProceedButton(
+      sizeOfWidthFromScreenSize: 0.5,
+      title: 'Stop Focusing',
+      onPressed: () {
+        context.read<FocusModeCubit>().stopFocusing();
+      },
+    );
   }
 }

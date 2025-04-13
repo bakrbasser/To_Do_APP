@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do/Model_View/cubit/focus_mode/focus_mode_cubit.dart';
 import 'package:to_do/Model_View/cubit/logged_user/logged_user_cubit.dart';
 import 'package:to_do/Model_View/cubit/task/task_crud/task_cubit.dart';
 import 'package:to_do/Model_View/storage/in_memory_categories.dart';
@@ -17,8 +18,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TaskCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => TaskCubit(),
+        ),
+        BlocProvider(
+          create: (context) => FocusModeCubit(),
+        ),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.instance.theme,
@@ -44,6 +52,7 @@ class _AppScreenState extends State<AppScreen> {
   @override
   void initState() {
     super.initState();
+
     In_Memory_Categories.instance.loadCategories();
     BlocProvider.of<LoggedUserCubit>(context, listen: false).checkLoggedUser();
   }

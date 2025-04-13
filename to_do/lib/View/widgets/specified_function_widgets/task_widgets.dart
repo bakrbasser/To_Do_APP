@@ -7,6 +7,7 @@ import 'package:to_do/Model_View/storage/cached_task.dart';
 import 'package:to_do/Model_View/storage/in_memory_categories.dart';
 import 'package:to_do/View/screens/sub_screens/task_details.dart';
 import 'package:to_do/View/theme/theme.dart';
+import 'package:to_do/View/widgets/visual_utils/boxes.dart';
 import 'package:to_do/View/widgets/visual_utils/buttons.dart';
 import 'package:to_do/general_utils/navigation_helper.dart';
 import 'package:to_do/general_utils/screen_size_helper.dart';
@@ -25,28 +26,25 @@ class TaskCard extends StatelessWidget {
         Cached_Task_For_Updating.instance.index = index;
         NavigationHelper.navigateTo(context, TaskDetails(task: task));
       },
-      child: SizedBox(
-        height: ScreenSizeHelper.height_P(context, 0.1),
-        child: Container(
-          color: AppColors.instance.navigationBarBackground,
-          child: Padding(
-            padding: const EdgeInsets.all(1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TaskCheckBox(
-                  isDone: task.isDoneAsBool,
-                  id: task.id!,
-                ),
-                TitleAndDate(title: task.title, date: task.formattedDate),
-                const Spacer(),
-                CategoryAndPriority(
-                    category:
-                        In_Memory_Categories.instance.category(task.categoryId),
-                    priority: task.priority!)
-              ],
-            ),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 10.0),
+        child: GreyBoxWithLinearCornersForCards(
+          heightPortionFromScreenHeight: 0.1,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TaskCheckBox(
+                isDone: task.isDoneAsBool,
+                id: task.id!,
+              ),
+              TitleAndDate(title: task.title, date: task.formattedDate),
+              const Spacer(),
+              CategoryAndPriority(
+                  category:
+                      In_Memory_Categories.instance.category(task.categoryId),
+                  priority: task.priority!)
+            ],
           ),
         ),
       ),
@@ -73,7 +71,7 @@ class _TaskCheckBoxState extends State<TaskCheckBox> {
       BlocProvider.of<TaskCubit>(context, listen: false).undoneTask(widget.id);
     }
     setState(() {
-      isChecked = value!;
+      isChecked = value;
     });
   }
 
@@ -171,7 +169,6 @@ class PriorityBadge extends StatelessWidget {
             children: [
               const Icon(
                 Icons.flag_outlined,
-                color: Colors.white,
               ),
               BodyMediumText(text: priority.toString())
             ],
@@ -189,11 +186,14 @@ class TasksList extends StatelessWidget {
   final List<TaskModel> tasks;
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) => TaskCard(
-        task: tasks[index],
-        index: index,
+    return Expanded(
+      child: ListView.builder(
+        itemCount: tasks.length,
+        shrinkWrap: true,
+        itemBuilder: (context, index) => TaskCard(
+          task: tasks[index],
+          index: index,
+        ),
       ),
     );
   }
