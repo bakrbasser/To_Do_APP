@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do/Model_View/cubit/focus_mode/focus_mode_cubit.dart';
 import 'package:to_do/View/theme/theme.dart';
+import 'package:to_do/View/widgets/visual_utils/boxes.dart';
 import 'package:to_do/View/widgets/visual_utils/buttons.dart';
 import 'package:to_do/View/widgets/visual_utils/themed_text.dart';
 import 'package:to_do/general_utils/screen_size_helper.dart';
@@ -14,6 +15,7 @@ class FocusScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const BodyLargeText(text: 'Focus'),
+        actions: const [ShowFocusTimePicker()],
       ),
       body: Column(
         children: [
@@ -61,6 +63,20 @@ class TimerCircularProgress extends StatelessWidget {
             TitleLargeText(text: time),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SetTimerDuration extends StatelessWidget {
+  const SetTimerDuration({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const GreyBoxWithLinearCorners(
+      heightPortionFromScreenHeight: 0.3,
+      child: Column(
+        children: [BodyMediumText(text: 'Set Focus Time')],
       ),
     );
   }

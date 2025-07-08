@@ -10,7 +10,7 @@ class FocusModeCubit extends Cubit<FocusModeState> {
 
   Stopwatch stopwatch = Stopwatch();
   Timer? timer;
-  Duration duration = const Duration(minutes: 30);
+  Duration duration = const Duration(minutes: 1);
 
   void startFocusing() {
     stopwatch.reset();

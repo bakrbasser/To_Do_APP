@@ -63,7 +63,7 @@ class TaskCubit extends Cubit<TaskState> {
     }
   }
 
-  Future<void> updateTask(UpdateModes mode) async {
+  Future<void> updateTask(UpdateModes? mode) async {
     //TODO: Handle Editing while filtered
 
     var task = Cached_Task_For_Updating.instance.task;
@@ -92,7 +92,6 @@ class TaskCubit extends Cubit<TaskState> {
             await taskRepository.updatePriority(task.id!, task.priority!);
         break;
       default:
-        // If no specific field is provided, update all fields
         isUpdated = false;
         break;
     }

@@ -66,6 +66,7 @@ class _BlockPickerListExampleState extends State<BlockPickerListExample> {
 
   // Utility function to convert Color to hex
   String colorToHex(Color color) {
+    // ignore: deprecated_member_use
     return '0xff${color.value.toRadixString(16).toUpperCase()}';
   }
 }

@@ -15,6 +15,7 @@ import 'package:to_do/Model_View/cubit/task/task_crud/task_cubit.dart';
 import 'package:to_do/Model_View/storage/added_category.dart';
 import 'package:to_do/Model_View/storage/cached_task.dart';
 import 'package:to_do/Model_View/storage/in_memory_categories.dart';
+import 'package:to_do/View/screens/main_screens/focus_screen.dart';
 import 'package:to_do/View/screens/sub_screens/create_new_category.dart';
 import 'package:to_do/View/screens/sub_screens/task_details.dart';
 import 'package:to_do/View/widgets/dialogs/add_task_dialog.dart';
@@ -419,7 +420,7 @@ class CategoryButton extends StatelessWidget {
 
   const CategoryButton({super.key, required this.category, required this.mode});
   final CategoryModel category;
-  final TaskFieldsModes mode;
+  final TaskFieldsModes? mode;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -733,5 +734,35 @@ class StopFocusing extends StatelessWidget {
         context.read<FocusModeCubit>().stopFocusing();
       },
     );
+  }
+}
+
+class ResetFocusTimer extends StatelessWidget {
+  const ResetFocusTimer({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ProceedButton(
+      sizeOfWidthFromScreenSize: 0.5,
+      title: 'Reset Time',
+      onPressed: () {
+        context.read<FocusModeCubit>().stopFocusing();
+      },
+    );
+  }
+}
+
+class ShowFocusTimePicker extends StatelessWidget {
+  const ShowFocusTimePicker({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          DialogHelper.dialogShower(context, const SetTimerDuration());
+        },
+        icon: const Icon(Icons.timer_outlined));
   }
 }
