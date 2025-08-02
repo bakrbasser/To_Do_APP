@@ -41,7 +41,7 @@ dependencies:
   path: ^1.9.0
   path_provider: ^2.1.5
   google_fonts: ^6.2.1
-  flutter_bloc: ^9.1.0
+  flutter_bloc: ^9.1.1
   flutter_colorpicker: ^1.1.0
   meta: ^1.15.0
   intl: ^0.20.2
